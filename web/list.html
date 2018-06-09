@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <title>list</title>  
+        <!--<link href='Scripts/easyui/themes/default/easyui.css' rel='stylesheet' type='text/css' />-->
+		<link href='Scripts/easyui/themes/bootstrap/easyui.css' rel='stylesheet' type='text/css' />
+        <link href='Scripts/easyui/themes/icon.css' rel='stylesheet' type='text/css'/>
+        <link href='Content/Style/base.css' rel='stylesheet' type='text/css' />
+        <script src='Scripts/jquery-1.8.0.min.js' type='text/javascript'></script>
+        <script src='Scripts/easyui/jquery.easyui.min.js' type='text/javascript'></script>
+        <script src='Scripts/easyui/easyui-lang-zh_CN.js' type='text/javascript'></script>
+
+    </head>
+    <body>
+        <div id="tb">
+            时间: <input type="text"> 至 <input type="text">
+        </div>
+        <div id="dg"></div>
+    </body>
+</html>
+<script type="text/javascript">
+    $(function(){
+
+        $('#tb > input').datebox();
+
+        $('#dg').datagrid({
+            url:'data.json',
+            toolbar:'#tb',
+            method:'get',
+            title:'demo',
+            columns:[[
+                {field: 'id',checkbox: true },
+                {field: 'sort', title: '排序', width: 30, align: 'left'},
+                {field: 'name', title: '名称', width: 100, align: 'left'},
+                {field: 'remark',title: '备注', width: 300, align: 'center'}
+            ]],
+            rownumbers: true,
+            singleSelect: false,
+            collapsible:true,
+            //width:700,
+            //height:100,
+            fit:true,
+            pageList: [20,30,50],
+            pagination: true,
+            striped:true,
+            selectOnCheck:true,
+            checkOnSelect:true
+        });
+
+
+    });
+</script>

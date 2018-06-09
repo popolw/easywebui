@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" /> 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />  	
+		<title>bootstrap</title>
+        <link href='Scripts/easyui/themes/default/easyui.css' rel='stylesheet' type='text/css' />
+        <link href='Scripts/easyui/themes/icon.css' rel='stylesheet' type='text/css' />
+        <link href='Content/Style/base.css' rel='stylesheet' type='text/css' />
+        <script src='Scripts/jquery-1.8.0.min.js' type='text/javascript'></script>
+        <script src='Scripts/easyui/jquery.easyui.min.js' type='text/javascript'></script>
+        <script src='Scripts/easyui/easyui-lang-zh_CN.js' type='text/javascript'></script>
+	</head>
+	<body class="easyui-layout">
+
+    <div data-options="region:'north',border:false">
+        <!--top menu start-->
+
+        <div class="yx-north">
+            <div class="LogInfo"> 
+                欢迎您，2255 &nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascript:void(0);">退出登录</a><br />
+                登录时间是2017-10-01&nbsp;&nbsp;
+            </div>
+
+            <div class="yx-tools">
+                <ul>
+                    <li group="1" clicked="false"><a href="javascript:void(0);"><img src="Content/Style/skin/UserWhite.png"/><br/>用户管理</a></li>
+                    <li group="7" clicked="false"><a href="javascript:void(0);"><img src="Content/Style/skin/SystemWhite.png"/><br/>系统管理</a></li>  
+                </ul>
+            </div>
+        </div>
+
+        <!--top menu end-->
+    </div>
+
+    <!--left menu start-->
+
+    <div data-options="region:'west',split:true,title:'菜单栏'" style="width:202px;">
+        <div class="yx-accordion" style="border: none;">
+
+            <div title="文章管理" class="yx-ParentTit" style="display: none;" parent="1">
+                <span parent="1" clicked="false"><img src="Content/Style/skin/UserBlack.png" />文章管理</span>
+                <ul>
+                    <li link="http://www.baidu.com"><span><a href="javascript:void(0);">文章添加</a></span></li>
+                    <li link="http://www.baidu.com"><span><a href="javascript:void(0);">文章列表</a></span></li>
+                    <li link="http://www.baidu.com"><span><a href="javascript:void(0);">文章类型添加</a></span></li>
+                    <li link="http://www.baidu.com"><span><a href="javascript:void(0);">文章类型列表</a></span></li>
+                </ul>
+            </div>
+
+            <div title="系统管理" class="yx-ParentTit" style="display: none;" parent="7">
+                <span parent="7" clicked="false"><img src="Content/Style/skin/UserBlack.png" />系统管理</span>
+                <ul>
+                        
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div data-options="region:'center',border:false">
+        <div class="easyui-tabs" data-options="fit:true">
+            <div title="Content" style="padding:2px;"><iframe scrolling="yes" title="Content" frameborder="0" src="list.html" style="width:100%;height:100%;"></iframe></div>
+        </div>
+    </div>
+
+    <!--left menu end-->
+</body>
+</html>
+
+<script type="text/javascript">
+    
+
+    $(function () {
+        $('.LogInfo > a').click(function(){
+            $.messager.confirm('Confirm','确定退出登录',function(r){
+                if(r) window.location.href='javascript:void(0);';
+            });
+        });
+
+        $(".yx-tools > ul").find("li").first().attr('clicked', true).attr('class', 'Active');
+        var first = $(".yx-tools > ul").find("li").first().attr('group');
+        $('.yx-ParentTit[parent=' + first + ']').css('display', '').find('ul').first().show();
+        $('span[parent=' + first + ']').first().attr('class', 'Active').attr('clicked', true);
+
+        ///左侧菜单点击事件响应
+        $(".yx-accordion > div").click(function () {
+            var className = $(this).find("ul").prev().attr('class');
+            if (className == 'Active') {
+                $(this).find("ul").prev().removeAttr('class');
+            } else {
+                $(this).find("ul").prev().attr('class', 'Active');
+            }
+            $(this).find("ul").slideToggle("slow");
+        });
+
+        ///顶部菜单点击事件响应
+        $(".yx-tools > ul").find("li").click(function () {
+            var clicked = eval($(this).attr('clicked'));
+            if (clicked) return;
+            var group = $(this).attr('group');
+            $('.yx-ParentTit').css('display', 'none');
+            $('div[class=yx-ParentTit][parent=' + group + ']').css('display', '');
+            $(this).parent().find('li[clicked=true]').attr('clicked', false);
+            $(this).attr('clicked', true);
+            $(this).parent().find('li[class=Active]').removeAttr('class');
+            $(this).attr('class', 'Active');
+            $('div[class=yx-ParentTit][parent=' + group + ']').first().find('ul').show();
+        });
+
+        ///子菜单项单击事件
+        $('.yx-accordion > div li').click(function () {
+            var title = $('a', $(this)).html();
+            var link = $(this).attr('link');
+            addtab(title, link);
+            //防止click事件冒泡，需要return false;
+            return false;
+        });
+
+        ///初始化显示第一个菜单
+        $(".yx-tools .SystemManage").click();
+        //标签关闭事件
+        $('.easyui-tabs').tabs({
+            onBeforeClose: function (title, index) {
+                if (window.tabs != null && window.tabs.length > 0) {
+                    for (var i = 0; i < window.tabs.length; i++) {
+                        if (typeof window.tabs[i]['title'] != "undefined" && window.tabs[i]['title'] == title) {
+                            window.tabs.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        });
+
+    });
+
+
+
+
+    ///================== 以下是公共函数 ===============
+    ///添加一个tab
+    var addtab = function (title, link, isAutoLoad) {
+        // $('iframe').attr('src', link);
+        // return;
+        title = $.trim(title);
+        if ($('.easyui-tabs').tabs('exists', title)) return $('.easyui-tabs').tabs('select', title);
+      
+        $('.easyui-tabs').tabs('add', {
+            title: title,
+            closable: true,
+            content: '<iframe scrolling="yes" title="' + title + '"  frameborder="0" src="' + link + '"  style="width:100%;height:100%;"></iframe>'
+        }).find("iframe[title='" + title + "']").load(function(){
+            //hideLoading(title);
+        });
+        //return showLoading('正在努力的加载页面，请稍候...');
+    };
+
+
+    ///删除一个tab
+    // 通过title删除tab,并刷新上一个页面（如果有preTitle）
+    // title: tab的标题
+    // preTitle: 上一个页面的标题
+    // type: 刷新datagrid的方式 true：reload，false:load
+    var deltab = function(title, preTitle, type) {
+        //var $obj = $(".easyui-tabs");
+        //if (!$obj.tabs('exists', title)) return false;
+        //$obj.tabs('close', title);
+        //if (preTitle && $obj.tabs('exists', preTitle)) {
+        //    $obj.tabs('select', preTitle);
+        //    var obj = $obj.find("iframe[title='" + preTitle + "']")[0].contentWindow;
+        //    if (obj) obj.reloaddatagrid(type);
+        //}
+        return false;
+    };
+
+
+//================================================
+</script>
+</script>
